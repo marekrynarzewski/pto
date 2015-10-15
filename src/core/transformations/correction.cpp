@@ -21,7 +21,22 @@ PNM* Correction::transform()
 
     PNM* newImage = new PNM(width, height, image->format());
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    for (int i = PIXEL_VAL_MIN; i <= PIXEL_VAL_MAX; i++)
+    {
+        LUT[i] = i;
+    }
+
+    for (int x=0; x<width; x++)
+    {
+        for (int y=0; y<height; y++)
+        {
+            QRgb pixel = image->pixel(x,y); // Getting the pixel(x,y) value
+
+            int r = qRed(pixel);    // Get the 0-255 value of the R channel
+            int g = qGreen(pixel);  // Get the 0-255 value of the G channel
+            int b = qBlue(pixel);
+        }
+    }
 
     return newImage;
 }
