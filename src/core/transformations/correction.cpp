@@ -63,6 +63,7 @@ PNM* Correction::transform()
 			b = LUT[b];
 			QColor newPixel = QColor(r,g,b);
             newImage->setPixel(x,y, newPixel.rgb());
+
         }
     }
 

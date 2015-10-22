@@ -24,6 +24,7 @@ private:
     QHash<int, int>* G;
     QHash<int, int>* B;
     QHash<int, int>* L;
+    void increment(QHash<int, int>* map, int key);
 };
 
 #endif // HISTOGRAM_H

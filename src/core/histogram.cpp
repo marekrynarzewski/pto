@@ -4,6 +4,7 @@
 #include <QPainter>
 
 #include <cmath>
+using namespace std;
 
 Histogram::Histogram(QImage* image)
 {
@@ -24,15 +25,59 @@ Histogram::~Histogram()
 
 void Histogram::generate(QImage* image)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    //qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    for (int i = 0; i < image->width(); i++){
+		for (int j = 0; j < image->height(); j++){
+			int r, g, b, l;
+			QRgb pixel = image->pixel(i, j);
+			r = qRed(pixel);    // Get the 0-255 value of the R channel
+            g = qGreen(pixel);  // Get the 0-255 value of the G channel
+            b = qBlue(pixel);
+			l = qGray(pixel);
+			this->increment(this->R, r);
+			this->increment(this->G, g);
+			this->increment(this->B, b);
+			this->increment(this->L, l);
+		}
+	}
+}
+
+void Histogram::increment(QHash<int, int>* map, int key)
+{
+	int value;
+	
+    value = map->value(key, 0);
+	value += 1;
+	map->insert(key, value);
 }
 
 /** Returns the maximal value of the histogram in the given channel */
 int Histogram::maximumValue(Channel selectedChannel = RGB)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    QHash<int, int>* map;
+    QHash<int, int>::iterator it;
+    int result;
+    int r, g, b, value;
 
-    return 0;
+    if (selectedChannel == RGB){
+        r = this->maximumValue(RChannel);
+        g  = this->maximumValue(GChannel);
+        b = this->maximumValue(BChannel);
+        return max(r, max(g, b));
+    }
+
+    result = 0;
+    map = this->get(selectedChannel);
+    for (it = map->begin(); it != map->end(); it++){
+        value = it.value();
+        if (value > result){
+            result = value;
+        }
+    }
+
+
+
+    return result;
 }
 
 
