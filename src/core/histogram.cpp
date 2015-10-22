@@ -51,6 +51,7 @@ void Histogram::increment(QHash<int, int>* map, int key)
 	map->insert(key, value);
 }
 
+
 /** Returns the maximal value of the histogram in the given channel */
 int Histogram::maximumValue(Channel selectedChannel = RGB)
 {
