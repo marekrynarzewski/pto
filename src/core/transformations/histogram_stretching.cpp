@@ -55,7 +55,8 @@ PNM* HistogramStretching::transform()
 QHash<int, int> HistogramStretching::stretch_histogram_by_channel(
         Histogram::Channel channel){
    QHash<int, int>* histogram, wynik;
-   int min, chnl, diff, con;
+   int min, max, chnl, diff;
+   double con;
    QHash<int, int>::iterator itp;
    QMap<int, int> map;
 
@@ -63,13 +64,31 @@ QHash<int, int> HistogramStretching::stretch_histogram_by_channel(
    for (itp = histogram->begin(); itp != histogram->end(); itp++){
        map.insert(itp.key(), itp.value());
    }
-   min = map.begin().key();
-   con = 255/(map.lastKey() - min);
+
+    min = 0;
+    for (int i = 0; i < 256; i++)
+    {
+        if (map.value(i) > 0)
+        {
+            min = i;
+            break;
+        }
+    }
+    max = 255;
+    for (int i = 255; i >= 0; i--)
+    {
+        if (map.value(i) > 0)
+        {
+            max = i;
+            break;
+        }
+    }
+   con = (double)255/(double)(max - min);
+   qDebug() << "con" << con;
    for (chnl = 0; chnl < 256; chnl++){
        diff = chnl-min;
        int res = con*diff;
        wynik.insert(chnl, res);
-       //qDebug() << "chnl" << chnl << "con" << con << "diff" << diff << endl;
    }
    return wynik;
 }

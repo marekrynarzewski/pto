@@ -19,7 +19,7 @@ public:
 
 private:
     void generate(QImage*); // iterates all parent image pixels and set the Hashes
-
+    void fill_zeros(QHash<int, int>* map, int k);
     QHash<int, int>* R;
     QHash<int, int>* G;
     QHash<int, int>* B;

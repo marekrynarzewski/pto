@@ -23,6 +23,14 @@ Histogram::~Histogram()
     delete L;
 }
 
+void Histogram::fill_zeros(QHash<int, int>* map, int k)
+{
+    if (!map->contains(k))
+    {
+        map->insert(k, 0);
+    }
+}
+
 void Histogram::generate(QImage* image)
 {
     //qDebug() << Q_FUNC_INFO << "Not implemented yet!";
@@ -40,6 +48,13 @@ void Histogram::generate(QImage* image)
 			this->increment(this->L, l);
 		}
 	}
+    for (int k = 0; k < 256; k++)
+    {
+        this->fill_zeros(this->R, k);
+        this->fill_zeros(this->G, k);
+        this->fill_zeros(this->B, k);
+        this->fill_zeros(this->L, k);
+    }
 }
 
 void Histogram::increment(QHash<int, int>* map, int key)
