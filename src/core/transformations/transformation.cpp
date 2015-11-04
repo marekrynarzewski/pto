@@ -103,9 +103,27 @@ QRgb Transformation::getPixel(int x, int y, Mode mode)
  */
 QRgb Transformation::getPixelCyclic(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	int width, height;
+	width = this->image->width();
+	height = this->image->height();
+    QRgb result;
+    qDebug() << "x" << x << "y" << y;
+	if (x < 0){
+		x = width - x;
+	}
+    else if (x > width){
+		x = x - width;
+	}
+	if (y < 0){
+        y = height - y;
+	}
+    else if (y > height){
+        y = y - height;
+	}
+    qDebug() << "x" << x << "y" << y;
 
-    return image->pixel(x,y);
+    result = this->image->pixel(x,y);
+    return result;
 }
 
 /**
@@ -114,9 +132,17 @@ QRgb Transformation::getPixelCyclic(int x, int y)
   */
 QRgb Transformation::getPixelNull(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    QRgb color;
+    int width = this->image->width();
+    int height = this->image->height();
+    if (x < 0 || x > width || y < 0 || y > height){
 
-    return image->pixel(x,y);
+    }
+    else {
+        color = this->image->pixel(x, y);
+
+    }
+    return color;
 }
 
 /**
@@ -126,9 +152,26 @@ QRgb Transformation::getPixelNull(int x, int y)
   */
 QRgb Transformation::getPixelRepeat(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
 
-    return image->pixel(x,y);
+    int width, height;
+    width = this->image->width();
+    height = this->image->height();
+    qDebug() << "x" << x << "y" << y;
+    if (x < 0){
+        x = 0;
+    }
+    else if (x > width-1){
+        x = width-1;
+    }
+    if (y < 0){
+        y = 0;
+    }
+    else if (y > width-1){
+        y = width-1;
+    }
+    qDebug() << "x" << x << "y" << y;
+
+    return this->image->pixel(x, y);
 }
 
 /** Returns a size x size part of the image centered around (x,y) */
@@ -136,9 +179,25 @@ math::matrix<float> Transformation::getWindow(int x, int y, int size,
                                               Channel channel,
                                               Mode mode = RepeatEdge)
 {
+    int start = size/2;
     math::matrix<float> window(size,size);
+    int sri, sci, dri, dci;
+    for (sri = x-start, dri = 0; sri < x+start; sri++, dri++)
+    {
+        for (sci = y-start, dci = 0; sci < x+start; sci++, dci++)
+        {
+           QRgb pixel = this->getPixel(sri, sci, mode);
+           float value;
+           switch(channel){
+                case LChannel: value = qGray(pixel); break;
+                case RChannel: value = qRed(pixel); break;
+                case GChannel: value = qGreen(pixel); break;
+                case BChannel: value = qBlue(pixel); break;
+           }
+           window[dri][dci] = value;
+        }
+    }
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
 
     return window;
 }
