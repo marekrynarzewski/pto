@@ -1,6 +1,5 @@
 #include "bin_gradient.h"
 
-using namespace std;
 BinarizationGradient::BinarizationGradient(PNM* img) :
     Transformation(img)
 {
@@ -24,15 +23,14 @@ PNM* BinarizationGradient::transform()
     {
         for (int h = 0; h < height; h++)
         {
-           suma += max(this->g1(w, h), this->g2(w, h));
-           licznik += suma * qGray(this->image->pixel(w, h));
+            int vg1 = this->g1(w, h);
+            int vg2 = this->g2(w, h);
+            int vmax = std::max(vg1, vg2);
+            suma += vmax;
+            licznik += vmax * qGray(this->image->pixel(w, h));
         }
     }
-    qDebug() << licznik;
-    qDebug() << suma;
     threshold = licznik/suma;
-    qDebug() << threshold;
-
     for (int w = 0; w < width; w++)
     {
         for (int h = 0; h < height; h++)
