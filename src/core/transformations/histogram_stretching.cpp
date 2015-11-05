@@ -84,7 +84,6 @@ QHash<int, int> HistogramStretching::stretch_histogram_by_channel(
         }
     }
    con = (double)255/(double)(max - min);
-   qDebug() << "con" << con;
    for (chnl = 0; chnl < 256; chnl++){
        diff = chnl-min;
        int res = con*diff;

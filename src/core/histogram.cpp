@@ -33,13 +33,12 @@ void Histogram::fill_zeros(QHash<int, int>* map, int k)
 
 void Histogram::generate(QImage* image)
 {
-    //qDebug() << Q_FUNC_INFO << "Not implemented yet!";
     for (int i = 0; i < image->width(); i++){
 		for (int j = 0; j < image->height(); j++){
 			int r, g, b, l;
 			QRgb pixel = image->pixel(i, j);
-			r = qRed(pixel);    // Get the 0-255 value of the R channel
-            g = qGreen(pixel);  // Get the 0-255 value of the G channel
+            r = qRed(pixel);
+            g = qGreen(pixel);
             b = qBlue(pixel);
 			l = qGray(pixel);
 			this->increment(this->R, r);

@@ -107,20 +107,18 @@ QRgb Transformation::getPixelCyclic(int x, int y)
 	width = this->image->width();
 	height = this->image->height();
     QRgb result;
-    //qDebug() << "x" << x << "y" << y;
 	if (x < 0){
-		x = width - x;
+        x = width + x;
 	}
     else if (x > width-1){
         x = x - width;
 	}
 	if (y < 0){
-        y = height - y;
+        y = height + y;
 	}
-    else if (y > height){
+    else if (y > height-1){
         y = y - height;
 	}
-    //qDebug() << "x" << x << "y" << y;
 
     result = this->image->pixel(x,y);
     return result;
@@ -156,7 +154,6 @@ QRgb Transformation::getPixelRepeat(int x, int y)
     int width, height;
     width = this->image->width();
     height = this->image->height();
-    //qDebug() << "x" << x << "y" << y;
     if (x < 0){
         x = 0;
     }
@@ -169,7 +166,6 @@ QRgb Transformation::getPixelRepeat(int x, int y)
     else if (y > width-1){
         y = width-1;
     }
-    //qDebug() << "x" << x << "y" << y;
 
     return this->image->pixel(x, y);
 }

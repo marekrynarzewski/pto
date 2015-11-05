@@ -12,7 +12,6 @@ BlurUniform::BlurUniform(PNM* img, ImageViewer* iv) :
 
 math::matrix<float> BlurUniform::getMask(int size, Mode mode)
 {
-    qDebug() << size;
     math::matrix<float> mask(size, size);
 
     for (int i = 0; i < size; i++)

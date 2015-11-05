@@ -14,6 +14,7 @@ PNM* BinarizationManual::transform()
 {
     int threshold = getParameter("threshold").toInt();
 
+
     int width  = image->width();
     int height = image->height();
 

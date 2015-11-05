@@ -10,6 +10,10 @@ public:
     BinarizationIterBimodal(PNM*, ImageViewer*);
 
     virtual PNM* transform();
+private:
+    int threshold_current;
+    QHash<int, int> * hg;
+    int avgSat(int, int);
 };
 
 #endif // BIN_ITERBIMODAL_H

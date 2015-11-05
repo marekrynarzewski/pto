@@ -1,5 +1,5 @@
 #include "bin_gradient.h"
-
+#include "bin_manual.h"
 BinarizationGradient::BinarizationGradient(PNM* img) :
     Transformation(img)
 {
@@ -12,34 +12,36 @@ BinarizationGradient::BinarizationGradient(PNM* img, ImageViewer* iv) :
 
 PNM* BinarizationGradient::transform()
 {
-    int width = image->width();
-    int height = image->height();
+    int width, height;
+    PNM* newImage;
+    int suma, licznik, threshold;
+    int w, h;
+    BinarizationManual* bm;
+    int vg1, vg2,vmax;
 
-    PNM* newImage = new PNM(width, height, QImage::Format_Mono);
+    width = image->width();
+    height = image->height();
 
-    int suma = 0, licznik = 0, threshold;
+    newImage = new PNM(width, height, QImage::Format_Mono);
 
-    for (int w = 0; w < width; w++)
+    suma = 0, licznik = 0, threshold;
+
+    for (w = 0; w < width; w++)
     {
-        for (int h = 0; h < height; h++)
+        for (h = 0; h < height; h++)
         {
-            int vg1 = this->g1(w, h);
-            int vg2 = this->g2(w, h);
-            int vmax = std::max(vg1, vg2);
+            vg1 = this->g1(w, h);
+            vg2 = this->g2(w, h);
+            vmax = std::max(vg1, vg2);
             suma += vmax;
             licznik += vmax * qGray(this->image->pixel(w, h));
         }
     }
     threshold = licznik/suma;
-    for (int w = 0; w < width; w++)
-    {
-        for (int h = 0; h < height; h++)
-        {
-            QRgb pxl = this->image->pixel(w, h);
-            int val = qGray(pxl);
-            newImage->setPixel(w, h, ((val > threshold)?(1):(0)));
-        }
-    }
+
+    bm = new BinarizationManual(this->image);
+    bm->setParameter("threshold", threshold);
+    newImage = bm->transform();
 
     return newImage;
 }
