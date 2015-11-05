@@ -10,6 +10,7 @@ public:
     BinarizationManual(PNM*, ImageViewer*);
 
     virtual PNM* transform();
+
 };
 
 #endif // BIN_MANUAL_H

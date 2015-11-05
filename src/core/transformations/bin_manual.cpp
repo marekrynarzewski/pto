@@ -19,7 +19,15 @@ PNM* BinarizationManual::transform()
 
     PNM* newImage = new PNM(width, height, QImage::Format_Mono);
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    for (int w = 0; w < width; w++)
+    {
+        for (int h = 0; h < height; h++)
+        {
+            QRgb pxl = this->image->pixel(w, h);
+            int val = qGray(pxl);
+            newImage->setPixel(w, h, ((val > threshold)?(1):(0)));
+        }
+    }
 
     return newImage;
 }

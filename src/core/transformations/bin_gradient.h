@@ -10,6 +10,9 @@ public:
     BinarizationGradient(PNM*, ImageViewer*);
 
     virtual PNM* transform();
+private:
+    int g1(int, int);
+    int g2(int, int);
 };
 
 #endif // BIN_GRADIENT_H
