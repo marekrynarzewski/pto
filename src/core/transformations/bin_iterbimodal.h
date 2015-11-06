@@ -11,7 +11,7 @@ public:
 
     virtual PNM* transform();
 private:
-    int threshold_current;
+    int threshold;
     QHash<int, int> * hg;
     int avgSat(int, int);
 };

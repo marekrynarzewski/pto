@@ -29,17 +29,19 @@ PNM* BinarizationIterBimodal::transform()
     he = new HistogramEqualization(this->image);
     this->image = he->transform();
     this->hg = this->image->getHistogram()->get(Histogram::LChannel);
-    this->threshold_current = 128;
-    thresholdNew = (this->avgSat(0, this->threshold_current-1)*
-                    this->avgSat(this->threshold_current, 255))/2;
-    /*while (iter < 20 || thresholdNew != this->threshold_current )
+    this->threshold = 128;
+    thresholdNew = (this->avgSat(0, this->threshold-1)+
+                    this->avgSat(this->threshold, 255))/2;
+    while (thresholdNew != this->threshold)
     {
-        this->threshold_current = thresholdNew;
-        thresholdNew = (this->avgSat(0)*this->avgSat(1))/2;
+        this->threshold = thresholdNew;
+        thresholdNew = (this->avgSat(0, this->threshold-1)+
+                    this->avgSat(this->threshold, 255))/2;
         iter ++;
-    }*/
+        qDebug() << thresholdNew;
+    }
     bm = new BinarizationManual(this->image);
-    bm->setParameter("threshold", this->threshold_current);
+    bm->setParameter("threshold", this->threshold);
     newImage = bm->transform();
 
     return newImage;
@@ -47,20 +49,10 @@ PNM* BinarizationIterBimodal::transform()
 
 int BinarizationIterBimodal::avgSat(int start, int end)
 {
-    int start, end, iter, val, sum, licz, result;
+    int iter, val, sum, licz, result;
 
-    if (_class == 0)
-    {
-        start = 0;
-        end = this->threshold_current-1;
-    }
-    else
-    {
-        start = this->threshold_current;
-        end = 255;
-    }
-    sum = 0;
-    licz = 0;
+    sum = 1;
+    licz = 1;
     for (iter = start; iter <= end; iter++)
     {
         val = this->hg->value(iter);
