@@ -6,6 +6,7 @@ Transformation::Transformation(PNM* image) :
     parameters = new QHash<QString, QVariant>;
     this->image = image;
     this->supervisor = 0;
+    this->out = true;
 }
 
 Transformation::Transformation(PNM* image, ImageViewer* iv) :
@@ -14,7 +15,7 @@ Transformation::Transformation(PNM* image, ImageViewer* iv) :
     parameters = new QHash<QString, QVariant>;
     this->image = image;
     this->supervisor = iv;
-
+    this->out = true;
     if (iv)
     {
         connect(this, SIGNAL(started()), iv, SLOT(transformationStarted()));
@@ -119,7 +120,6 @@ QRgb Transformation::getPixelCyclic(int x, int y)
     else if (y > height-1){
         y = y - height;
 	}
-
     result = this->image->pixel(x,y);
     return result;
 }
@@ -166,7 +166,6 @@ QRgb Transformation::getPixelRepeat(int x, int y)
     else if (y > width-1){
         y = width-1;
     }
-
     return this->image->pixel(x, y);
 }
 
@@ -175,12 +174,12 @@ math::matrix<float> Transformation::getWindow(int x, int y, int size,
                                               Channel channel,
                                               Mode mode = RepeatEdge)
 {
-    int start = size/2;
+     int start = size/2;
     math::matrix<float> window(size,size);
     int sri, sci, dri, dci;
-    for (sri = x-start, dri = 0; sri < x+start; sri++, dri++)
+    for (sri = x-start, dri = 0; sri <= x+start; sri++, dri++)
     {
-        for (sci = y-start, dci = 0; sci < x+start; sci++, dci++)
+        for (sci = y-start, dci = 0; sci <= y+start; sci++, dci++)
         {
            QRgb pixel = this->getPixel(sri, sci, mode);
            float value;
@@ -189,11 +188,11 @@ math::matrix<float> Transformation::getWindow(int x, int y, int size,
                 case RChannel: value = qRed(pixel); break;
                 case GChannel: value = qGreen(pixel); break;
                 case BChannel: value = qBlue(pixel); break;
+           default: value = 0; break;
            }
            window[dri][dci] = value;
         }
     }
-
 
     return window;
 }

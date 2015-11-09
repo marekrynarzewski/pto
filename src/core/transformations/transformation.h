@@ -55,6 +55,7 @@ protected:
     PNM*                      image;
     QHash<QString, QVariant>* parameters;
     ImageViewer*              supervisor;
+    bool out;
 };
 
 #endif // TRANSFORMATION_H

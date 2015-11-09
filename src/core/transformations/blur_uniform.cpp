@@ -21,5 +21,6 @@ math::matrix<float> BlurUniform::getMask(int size, Mode mode)
             mask[i][j] = 1.0;
         }
     }
-    return mask;
+
+   return mask;
 }

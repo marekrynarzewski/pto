@@ -24,7 +24,7 @@ PNM* BinarizationGradient::transform()
 
     newImage = new PNM(width, height, QImage::Format_Mono);
 
-    suma = 0, licznik = 0, threshold;
+    suma = 0, licznik = 0;
 
     for (w = 0; w < width; w++)
     {
