@@ -21,15 +21,16 @@ PNM* Convolution::transform()
 math::matrix<float> Convolution::getMask(int size, Mode mode = Normalize)
 {
     math::matrix<float> mask(size, size);
-    int cen = size/2;
-    mask[cen][cen] = 1.0;
-    for (int i = 0; i < size && i != cen; i++)
+    int center = size/2;
+
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < size && j != cen; j++)
+        for (int j = 0; j < size; j++)
         {
             mask[i][j] = 0.0;
         }
     }
+    mask[center][center] = 1.0;
 
     return mask;
 }
@@ -40,18 +41,19 @@ PNM* Convolution::convolute(math::matrix<float> mask, Mode mode = RepeatEdge)
     int width  = image->width(),
         height = image->height();
     PNM* newImage = new PNM(width, height, image->format());
-    float weight = sum(mask);
-    int size = mask.colsize()/2;
-    iteratePixelsByChannel(newImage, size, LChannel, mode, weight);
-    iteratePixelsByChannel(newImage, size, RChannel, mode, weight);
-    iteratePixelsByChannel(newImage, size, GChannel, mode, weight);
-    iteratePixelsByChannel(newImage, size, BChannel, mode, weight);
-
+    this->mask = mask;
+    this->maskSize = this->mask.colsize();
+    this->maskWeight = this->sum(this->mask);
+    iteratePixelsByChannel(LChannel, mode);
+    /*iteratePixelsByChannel(RChannel, mode);
+    iteratePixelsByChannel(GChannel, mode);
+    iteratePixelsByChannel(BChannel, mode);
+*/
     return newImage;
 
 }
 
-const void Convolution::iteratePixelsByChannel(PNM* newImage, int size, Channel channel, Mode mode, float weight)
+const void Convolution::iteratePixelsByChannel(Channel channel, Mode mode)
 {
     int width  = image->width(),
         height = image->height();
@@ -59,35 +61,25 @@ const void Convolution::iteratePixelsByChannel(PNM* newImage, int size, Channel 
     {
         for (int j = 0; j < height; j++)
         {
-             convulatePixel(newImage, i, j, size, channel, mode, weight);
+             this->convolutePixel(i, j,channel, mode);
         }
     }
 }
 
- const void Convolution::convulatePixel(PNM* newImage, int row, int col, int size, Channel channel, Mode mode, float weight)
+ const int Convolution::convolutePixel(int row, int col, Channel channel, Mode mode)
  {
-     math::matrix<float> window = getWindow(row, col, size, channel, mode);
-     math::matrix<float> reflect = this->reflection(window);
-     math::matrix<float> accumulator = this->join(window, reflect);
-     float sumOfAccumulator = this->sum(accumulator);
-     if (weight > 0)
-     {
-         sumOfAccumulator = sumOfAccumulator/weight;
-     }
-     if (sumOfAccumulator > 0 && sumOfAccumulator < 255)
-     {
-         newImage->setPixel(row, col, (int)sumOfAccumulator);
-     }
-     else if (sumOfAccumulator < 0)
-     {
-         newImage->setPixel(row, col, 0);
-     }
-     else
-     {
-         newImage->setPixel(row, col, 255);
-     }
- }
+     math::matrix<float> window, reflect, accumulator;
 
+     window = getWindow(row, col, this->maskSize, channel, mode);
+     reflect = this->reflection(this->mask);
+     accumulator = this->join(window, reflect);
+     float sumOfAccumulator = this->sum(accumulator);
+     if (this->maskWeight > 0)
+     {
+         sumOfAccumulator = sumOfAccumulator/this->maskWeight;
+     }
+     return (int) sumOfAccumulator;
+ }
 /** Joins to matrices by multiplying the A[i,j] with B[i,j].
   * Warning! Both Matrices must be squares with the same size!
   */

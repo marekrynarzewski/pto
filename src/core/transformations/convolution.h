@@ -3,6 +3,7 @@
 
 #include "transformation.h"
 #include "matrix/cmatrix"
+#include "math.h"
 
 class Convolution : public Transformation
 {
@@ -18,8 +19,11 @@ protected:
     const math::matrix<float> join(math::matrix<float>, math::matrix<float>);
     const float               sum(math::matrix<float>);
     const math::matrix<float> reflection(math::matrix<float>);
-    const void iteratePixelsByChannel(PNM*,int, Channel, Mode, float);
-    const void convulatePixel(PNM*, int, int, int, Channel, Mode, float);
+    const void iteratePixelsByChannel(Channel, Mode);
+    const int convolutePixel(int, int, Channel, Mode);
+    math::matrix<float> mask;
+    int maskSize;
+    float maskWeight;
 };
 
 #endif // CONVOLUTION_H
