@@ -43,7 +43,7 @@ PNM* Convolution::convolute(math::matrix<float> mask, Mode mode = RepeatEdge)
     QHash<int, QHash<int, int> > R, G, B, L;
     PNM* newImage = new PNM(width, height, image->format());
     this->reflectMask = this->reflection(mask);
-    this->maskSize = mask.colsize();
+    this->maskSize = mask.colno();
     this->maskWeight = this->sum(mask);
     if (this->image->format() == QImage::Format_Indexed8)
     {
@@ -91,9 +91,7 @@ const QHash<int, QHash<int, int> > Convolution::iteratePixelsByChannel(Channel c
         for (int j = 0; j < height; j++)
         {
             res = this->convolutePixel(i, j,channel, mode);
-            if (channel == RChannel)
-                //qDebug()<< i << j << res;
-             tmp.insert(j, res);
+            tmp.insert(j, res);
         }
         result.insert(i, tmp);
     }

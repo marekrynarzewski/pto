@@ -32,6 +32,13 @@ math::matrix<float> BlurGaussian::getMask(int size, Mode mode)
             mask[dri][dci] = this->getGauss(sri, sci, this->sigma);
         }
     }
+    for (i = 0; i < size; i++)
+    {
+        for (j = 0; j < size; j++)
+        {
+            mask(i, j) = this->getGauss(i/this->radius, j/this->radius, this->sigma);
+        }
+    }
 
     return mask;
 }
