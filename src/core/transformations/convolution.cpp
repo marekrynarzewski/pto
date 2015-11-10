@@ -40,46 +40,95 @@ PNM* Convolution::convolute(math::matrix<float> mask, Mode mode = RepeatEdge)
 {
     int width  = image->width(),
         height = image->height();
+    QHash<int, QHash<int, int> > R, G, B, L;
     PNM* newImage = new PNM(width, height, image->format());
-    this->mask = mask;
-    this->maskSize = this->mask.colsize();
-    this->maskWeight = this->sum(this->mask);
-    iteratePixelsByChannel(LChannel, mode);
-    /*iteratePixelsByChannel(RChannel, mode);
-    iteratePixelsByChannel(GChannel, mode);
-    iteratePixelsByChannel(BChannel, mode);
-*/
+    this->reflectMask = this->reflection(mask);
+    this->maskSize = mask.colsize();
+    this->maskWeight = this->sum(mask);
+    if (this->image->format() == QImage::Format_Indexed8)
+    {
+        L = iteratePixelsByChannel(LChannel, mode);
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                newImage->setPixel(i, j, L.value(i).value(j));
+            }
+        }
+    }
+    else
+    {
+        R = iteratePixelsByChannel(RChannel, mode);
+        G = iteratePixelsByChannel(GChannel, mode);
+        B = iteratePixelsByChannel(BChannel, mode);
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                int r = R.value(i).value(j);
+                //qDebug() << i << j << r;
+                int g = G.value(i).value(j);
+                int b = B.value(i).value(j);
+                QColor newPixel = QColor(r,g,b);
+                newImage->setPixel(i,j, newPixel.rgb());
+             }
+        }
+    }
+
     return newImage;
 
 }
 
-const void Convolution::iteratePixelsByChannel(Channel channel, Mode mode)
+const QHash<int, QHash<int, int> > Convolution::iteratePixelsByChannel(Channel channel, Mode mode)
 {
+    QHash<int, QHash<int, int> > result;
     int width  = image->width(),
         height = image->height();
+    int res;
     for (int i = 0; i < width; i++)
     {
+        QHash<int, int> tmp;
         for (int j = 0; j < height; j++)
         {
-             this->convolutePixel(i, j,channel, mode);
+            res = this->convolutePixel(i, j,channel, mode);
+            if (channel == RChannel)
+                //qDebug()<< i << j << res;
+             tmp.insert(j, res);
         }
+        result.insert(i, tmp);
     }
+
+    return result;
 }
 
+int check_range(int myValue, int min, int max)
+{
+    if (myValue < min)
+    {
+        return min;
+    }
+    if (myValue > max)
+    {
+        return max;
+    }
+    return myValue;
+}
  const int Convolution::convolutePixel(int row, int col, Channel channel, Mode mode)
  {
-     math::matrix<float> window, reflect, accumulator;
+     math::matrix<float> window, accumulator;
 
      window = getWindow(row, col, this->maskSize, channel, mode);
-     reflect = this->reflection(this->mask);
-     accumulator = this->join(window, reflect);
+     accumulator = this->join(window, this->reflectMask);
      float sumOfAccumulator = this->sum(accumulator);
-     if (this->maskWeight > 0)
+     if (this->maskWeight != 0)
      {
          sumOfAccumulator = sumOfAccumulator/this->maskWeight;
      }
-     return (int) sumOfAccumulator;
+ //   qDebug()<< (int) sumOfAccumulator;
+
+    return check_range((int)sumOfAccumulator, 0, 255);
  }
+
 /** Joins to matrices by multiplying the A[i,j] with B[i,j].
   * Warning! Both Matrices must be squares with the same size!
   */

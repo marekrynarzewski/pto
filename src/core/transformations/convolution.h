@@ -19,9 +19,9 @@ protected:
     const math::matrix<float> join(math::matrix<float>, math::matrix<float>);
     const float               sum(math::matrix<float>);
     const math::matrix<float> reflection(math::matrix<float>);
-    const void iteratePixelsByChannel(Channel, Mode);
+    const QHash<int, QHash<int, int> > iteratePixelsByChannel(Channel, Mode);
     const int convolutePixel(int, int, Channel, Mode);
-    math::matrix<float> mask;
+    math::matrix<float> reflectMask;
     int maskSize;
     float maskWeight;
 };
