@@ -2,6 +2,7 @@
 #define NOISE_MEDIAN_H
 
 #include "convolution.h"
+#include <algorithm>
 
 class NoiseMedian : public Convolution
 {
