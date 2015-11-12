@@ -24,14 +24,7 @@ PNM* BlurGaussian::transform()
 math::matrix<float> BlurGaussian::getMask(int size, Mode mode)
 {
     math::matrix<float> mask(size, size);
-    int sri, sci, dri, dci;
-    for (dri = 0, sri = size-(size+1); dri < size; dri++, sri++)
-    {
-        for (dci = 0, sci = size-(size+1); dci < size; dci++, sci++)
-        {
-            mask[dri][dci] = this->getGauss(sri, sci, this->sigma);
-        }
-    }
+    int i, j;
     for (i = 0; i < size; i++)
     {
         for (j = 0; j < size; j++)
