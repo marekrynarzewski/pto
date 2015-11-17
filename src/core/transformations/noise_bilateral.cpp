@@ -45,34 +45,40 @@ PNM* NoiseBilateral::transform()
 
 int NoiseBilateral::calcVal(int x, int y, Channel channel)
 {
-    float sum;
+    double sum;
     int i, j;
     int I_ij, I_xy;
-    float cc, sc;
+    double cc, sc;
     QPoint P_ij, P_xy;
-    float mul, numer;
+    double mul, mul2, numer;
     math::matrix<float> window;
+    int result;
+    int srednica;
 
-    window = this->getWindow(x, y, this->radius, channel, RepeatEdge);
+    srednica = 2 * this->radius + 1;
+
+    window = this->getWindow(x, y, srednica, channel, RepeatEdge);
     sum = 0.0;
     numer = 0.0;
-    I_xy = window[x][y];
-    P_xy = QPoint(x, y);
-    for (i = 0; i < this->radius; i++)
+    I_xy = window[this->radius][this->radius];
+    P_xy = QPoint(this->radius, this->radius);
+    for (i = 0; i < srednica; i++)
     {
-        for (j = 0; j < this->radius; j++)
+        for (j = 0; j < srednica; j++)
         {
             I_ij = window[i][j];
             cc = this->colorCloseness(I_ij, I_xy);
             P_ij = QPoint(i, j);
             sc = this->spatialCloseness(P_ij, P_xy);
             mul = cc * sc;
+            mul2 = mul * I_ij;
             sum += mul;
-            numer += sum *I_ij;
+            numer += mul2;
         }
     }
 
-    return numer/sum;
+    result = numer/sum;
+    return std::max(0, std::min(255, result));
 }
 
 float NoiseBilateral::colorCloseness(int val1, int val2)

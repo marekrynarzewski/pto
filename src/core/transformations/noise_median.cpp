@@ -63,7 +63,7 @@ int NoiseMedian::getMedian(int x, int y, Channel channel)
     {
         for (sc = y-radius; sc <= y+radius; sc++)
         {
-            QRgb color = this->getPixel(x, y, RepeatEdge);
+            QRgb color = this->getPixel(sr, sc, CyclicEdge);
             float value;
             switch(channel)
             {
@@ -77,7 +77,7 @@ int NoiseMedian::getMedian(int x, int y, Channel channel)
     }
     //qDebug() <<toString(window, powSize);
     std::sort(window, window+powSize);
-    //qDebug() << toString(window, powSize);
+    //sqDebug() << toString(window, powSize);
     int center = powSize/2;
     int result =  window[center];
     //qDebug() << result;
