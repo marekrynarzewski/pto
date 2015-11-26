@@ -18,6 +18,10 @@ protected:
     virtual void prepareMatrices() = 0;
     math::matrix<float> g_x,
                         g_y;
+
+private:
+    int calcValue(int, int, Channel, PNM*, PNM*);
+    int getValue(PNM*, int, int, Channel);
 };
 
 #endif // EDGE_GRADIENT_H
