@@ -23,7 +23,8 @@ PNM* EdgeZeroCrossing::transform()
 
     PNM* newImage = new PNM(width, height, QImage::Format_Indexed8);
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+    //PNM* lg = this->convolute(EdgeLaplaceOfGauss::getMask(), RepeatEdge);
+    int v_0 = 128;
 
     return newImage;
 }
