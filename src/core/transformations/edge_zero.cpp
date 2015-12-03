@@ -23,15 +23,16 @@ PNM* EdgeZeroCrossing::transform()
     int    t     = getParameter("threshold").toInt();
 
     PNM* newImage = new PNM(width, height, QImage::Format_Indexed8);
-    EdgeLaplaceOfGauss* elog = new EdgeLaplaceOfGauss(this->image, this->supervisor);
+    EdgeLaplaceOfGauss* elog;
+    elog = new EdgeLaplaceOfGauss(this->image, this->supervisor);
     math::matrix<float> mask = elog->getMask(size, RepeatEdge);
-    this->image = this->convolute(mask, RepeatEdge);
+    this->image = elog->convolute(mask, RepeatEdge);
     int v_0 = 128;
     for (int i = 0; i < this->image->width(); i++)
     {
         for (int j = 0; j < this->image->height(); j++)
         {
-            windowR = this->getWindow(i, j, size, RChannel, RepeatEdge);
+            windowR = this->getWindow(i, j, size, LChannel, RepeatEdge);
             //windowG = this->getWindow(i, j, size, GChannel, RepeatEdge);
             //windowB = this->getWindow(i, j, size, BChannel, RepeatEdge);
             //windowL = this->getWindow(i, j, size, LChannel, RepeatEdge);

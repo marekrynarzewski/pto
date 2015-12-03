@@ -12,20 +12,25 @@ EdgeLaplaceOfGauss::EdgeLaplaceOfGauss(PNM* img, ImageViewer* iv) :
 {
 }
 
-math::matrix<float> EdgeLaplaceOfGauss::getMask(int, Mode)
+math::matrix<float> EdgeLaplaceOfGauss::getMask(int size, Mode mode)
 {
-    size = getParameter("size").toInt();
+    //size = getParameter("size").toInt();
     double sigma = getParameter("sigma").toDouble();
     math::matrix<float> mask(size, size);
-    int radius = (size/2)+1;
-    int i, j;
-    for (i = 0; i < size; i++)
+    qDebug() << size;
+    QString s = "";
+    int i, j, k, l;
+    for (i = 0, k = -size/2; i < size; i++, k++)
     {
-        for (j = 0; j < size; j++)
+        QString ln = "";
+        for (j = 0, l = -size/2; j < size; j++, l++)
         {
-            mask(i, j) = this->getLoG(i/radius, j/radius, sigma);
+            mask(i, j) = this->getLoG(k, l, sigma);
+            ln += QString::number(mask(i, j));
         }
+        s += ln+"\n";
     }
+    qDebug() << s;
 
     return mask;
 }
