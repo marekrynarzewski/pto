@@ -16,13 +16,21 @@ EdgeCanny::EdgeCanny(PNM* img, ImageViewer* iv) :
 
 PNM* EdgeCanny::transform()
 {
-    int width  = image->width(),
-        height = image->height();
+    int width, height;
+    int upper_thresh, lower_thresh;
+    ConversionGrayscale* cg;
+    PNM* newImage;
+    BlurGaussian* bg;
+    width = image->width();
+    height = image->height();
 
-    int upper_thresh = getParameter("upper_threshold").toInt(),
-        lower_thresh = getParameter("lower_threshold").toInt();
+    upper_thresh = getParameter("upper_threshold").toInt();
+    lower_thresh = getParameter("lower_threshold").toInt();
 
-    PNM* newImage = new PNM(width, height, QImage::Format_Indexed8);
+    cg = new ConversionGrayscale(this->image);
+    newImage = cg->transform();
+    bg = new BlurGaussian(this->image);
+    bg->setParameter("size", 3);
 
     qDebug() << Q_FUNC_INFO << "Not implemented yet!";
 
