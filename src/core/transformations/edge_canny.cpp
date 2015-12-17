@@ -18,6 +18,20 @@ EdgeCanny::EdgeCanny(PNM* img, ImageViewer* iv) :
 
 PNM* EdgeCanny::toGrayScale(PNM* img)
 {
+    double vg = (*v)[i][j];
+    double hg = (*h)[i][j];
+    return std::sqrt(vg*vg+hg*hg);
+}
+
+double EdgeCanny::grad_dir(int i, int j)
+{
+    double vg = (*v)[i][j];
+    double hg = (*h)[i][j];
+    return atan(vg/hg);
+}
+
+PNM* EdgeCanny::toGrayScale(PNM* img)
+{
     ConversionGrayscale* cg;
     PNM* result;
 
@@ -112,9 +126,6 @@ PNM* EdgeCanny::transform()
     this->classifyPixels();
 
 
-    delete cg;
-    delete bg;
-    delete es;
 
     return newImage;
 }
