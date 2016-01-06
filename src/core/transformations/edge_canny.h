@@ -10,29 +10,19 @@ public:
     EdgeCanny(PNM*, ImageViewer*);
 
     virtual PNM* transform();
-    double grad_pow(int, int);
-    double grad_dir(int, int);
-    PNM* toGrayScale(PNM*);
-    PNM* toBlurGaussian(PNM*);
-    void getGradients(PNM*);
-    QList<QPoint> edgesList;
-    void classifyPixels();
-    void thresholding_with_histeresis();
-
-
-
 private:
     PNM* toGrayScale(PNM*);
     PNM* toBlurGaussian(PNM*);
-    void getGradients(PNM*);
-    QList<QPoint> edgesList;
+    void getGradients(int, int);
+    QList<QPoint> initialEdges;
     math::matrix<float> magnitude;
     math::matrix<float> direction;
     void calcGradAndDir();
     void classifyPixels();
-    void hysteresis();
+    bool hysteresis(int, int, int, int, int);
     PNM* newImage;
-    math::matrix<float> *v, *h;
+    math::matrix<float> *Gx, *Gy;
+    int upper_thresh, lower_thresh;
 };
 
 #endif // EDGECANNY_H
