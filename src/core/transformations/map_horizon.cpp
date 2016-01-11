@@ -88,7 +88,7 @@ PNM* MapHorizon::transform()
                 }
                 else
                 {
-                    qDebug() << delta << val;
+
                 }
             }
             else

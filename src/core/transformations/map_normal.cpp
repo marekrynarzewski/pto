@@ -56,10 +56,8 @@ PNM* MapNormal::transform()
     {
         for (int j = 0; j < this->image->height(); j++)
         {
-            qDebug() << (*gkx)[i][j];
-            qDebug() << (*gky)[i][j];
-            dx = (double)(*gkx)[i][j]/255.0;
-            dy = (double)(*gky)[i][j]/255.0;
+            dx = (double)(*gkx)(i, j)/255.0;
+            dy = (double)(*gky)(i, j)/255.0;
             dz = 1.0/strength;
             //qDebug () << dx << dy << dz;
             norm = 1/(std::sqrt(dx*dx+dy*dy+dz*dz));
