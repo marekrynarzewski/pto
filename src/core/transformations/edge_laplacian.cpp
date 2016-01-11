@@ -10,7 +10,7 @@ EdgeLaplacian::EdgeLaplacian(PNM* img, ImageViewer* iv) :
 {
 }
 
-math::matrix<float> EdgeLaplacian::getMask(int, Mode)
+math::matrix<float> EdgeLaplacian::getMask(int i, Mode m)
 {
     int size = getParameter("size").toInt();
     math::matrix<float> mask(size, size);

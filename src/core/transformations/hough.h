@@ -17,6 +17,9 @@ private:
     math::matrix<T> matrix(int width, int height, T value);
     template<typename T>
     void normalize(T min, T max, math::matrix<T>& m, T n_min, T n_max);
+    PNM* toEdgeLaplacian(PNM* img);
+    template<typename T>
+    void normalize(math::matrix<T>& m, T max);
 };
 
 #endif // HOUGH_H

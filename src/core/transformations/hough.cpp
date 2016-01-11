@@ -24,6 +24,18 @@ PNM* Hough::toGrayScale(PNM* img)
     return result;
 }
 
+PNM* Hough::toEdgeLaplacian(PNM* img)
+{
+    EdgeLaplacian* el;
+    PNM* result;
+
+    el = new EdgeLaplacian(img);
+    el->setParameter("size", 3);
+    result = el->transform();
+
+    return result;
+}
+
 math::matrix<int> Hough::zero(int width, int height)
 {
     math::matrix<int> result(width, height);
@@ -37,9 +49,9 @@ template<typename T>
 void Hough::normalize(T min, T max, math::matrix<T>& m, T n_min, T n_max)
 {
     T value, licz, mian, ulam, wynik;
-    for (int i = 0; i < m.rowno(); i++)
+    for (size_t i = 0; i < m.rowno(); i++)
     {
-        for (int j = 0; j < m.colno(); j++)
+        for (size_t j = 0; j < m.colno(); j++)
         {
             value = m(i, j);
             licz = value - min;
@@ -47,6 +59,24 @@ void Hough::normalize(T min, T max, math::matrix<T>& m, T n_min, T n_max)
             ulam = licz/mian;
             wynik = ulam*(n_max-n_min)+n_min;
             m(i, j) = wynik;
+        }
+    }
+}
+
+template<typename T>
+void Hough::normalize(math::matrix<T>& m, T max)
+{
+    size_t i, j;
+    T maxValue, current;
+
+    maxValue = m.max();
+    for (i = 0; i < m.rowno(); i++)
+    {
+        for (j = 0; j < m.colno(); j++)
+        {
+            current = m(i, j);
+            m(i, j) = (current*max)/maxValue;
+
         }
     }
 }
@@ -70,19 +100,18 @@ math::matrix<T> Hough::matrix(int width, int height, T value)
 PNM* Hough::transform()
 {   
     PNM *gsImg, *result;
-    int thetaDensity, theta_size, width, height;
-    int i, j, k, theta, ro, newWidth, newHeight;
-    int max, ro_max, value;
-    EdgeLaplacian* el;
+    int thetaDensity, theta_size, value;
+    int i, j, k,  ro, ro_max; //iteratory
+    int width, height, newWidth, newHeight; //rozmiary
+    double theta;
     math::matrix<int> hough;
     QRgb pixel;
 
-    thetaDensity = getParameter("theta_density").toInt();
+    thetaDensity = this->getParameter("theta_density").toInt();
     gsImg = this->toGrayScale(this->image);
     if (this->getParameter("skip_edge_detection").toBool() == false)
     {
-        el = new EdgeLaplacian(gsImg);
-        gsImg = el->transform();
+        gsImg = this->toEdgeLaplacian(gsImg);
     }
     width = gsImg->width();
     height = gsImg->height();
@@ -103,14 +132,14 @@ PNM* Hough::transform()
                 for (k = 0; k < theta_size; k++)
                 {
                     theta = (k * M_PI)/(thetaDensity*180);
-                    ro = i*std::cos(theta)+j*sin(theta);
-                    hough(k, ro+ro_max)++;
+                    ro = i*std::cos(theta)+j*std::sin(theta);
+                    hough(k, ro+ro_max) = hough(k, ro+ro_max)+1;
                 }
             }
+
         }
     }
-    max = hough.max();
-    this->normalize(0, max, hough, 0, 255);
+    this->normalize(hough, 255);
     for (i = 0; i < newWidth; i++)
     {
         for (j = 0; j < newHeight; j++)
