@@ -24,6 +24,17 @@ PNM* Hough::toGrayScale(PNM* img)
     return result;
 }
 
+PNM* Hough::toEdgeLaplacian(PNM* img)
+{
+    EdgeLaplacian* el;
+    PNM* result;
+
+    el = new EdgeLaplacian(img);
+    result = el->transform();
+
+    return result;
+}
+
 math::matrix<int> Hough::zero(int width, int height)
 {
     math::matrix<int> result(width, height);
@@ -37,9 +48,9 @@ template<typename T>
 void Hough::normalize(T min, T max, math::matrix<T>& m, T n_min, T n_max)
 {
     T value, licz, mian, ulam, wynik;
-    for (int i = 0; i < m.rowno(); i++)
+    for (size_t i = 0; i < m.rowno(); i++)
     {
-        for (int j = 0; j < m.colno(); j++)
+        for (size_t j = 0; j < m.colno(); j++)
         {
             value = m(i, j);
             licz = value - min;
@@ -73,7 +84,6 @@ PNM* Hough::transform()
     int thetaDensity, theta_size, width, height;
     int i, j, k, theta, ro, newWidth, newHeight;
     int max, ro_max, value;
-    EdgeLaplacian* el;
     math::matrix<int> hough;
     QRgb pixel;
 
@@ -81,8 +91,7 @@ PNM* Hough::transform()
     gsImg = this->toGrayScale(this->image);
     if (this->getParameter("skip_edge_detection").toBool() == false)
     {
-        el = new EdgeLaplacian(gsImg);
-        gsImg = el->transform();
+       // gsImg = this->toEdgeLaplacian(gsImg);
     }
     width = gsImg->width();
     height = gsImg->height();
@@ -103,10 +112,11 @@ PNM* Hough::transform()
                 for (k = 0; k < theta_size; k++)
                 {
                     theta = (k * M_PI)/(thetaDensity*180);
-                    ro = i*std::cos(theta)+j*sin(theta);
-                    hough(k, ro+ro_max)++;
+                    ro = i*std::cos(theta)+j*std::sin(theta);
+                    hough(k, ro+ro_max) = hough(k, ro+ro_max)+1;
                 }
             }
+
         }
     }
     max = hough.max();
