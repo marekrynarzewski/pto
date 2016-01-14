@@ -10,6 +10,10 @@ public:
     explicit HoughLines(PNM*, ImageViewer*);
 
     virtual PNM* transform();
+private:
+    PNM* detectEdges(PNM* img);
+    PNM* binarize(PNM* img);
+    PNM* houghTransform(PNM* img);
 };
 
 #endif // HOUGH_LINES_H
