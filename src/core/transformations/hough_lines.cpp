@@ -16,7 +16,7 @@ HoughLines::HoughLines(PNM* img, ImageViewer* iv) :
 {
 }
 
-PNM* Hough::binarize(PNM* img)
+PNM* HoughLines::binarize(PNM* img)
 {
     BinarizationGradient* bg;
     PNM* result;
@@ -27,7 +27,7 @@ PNM* Hough::binarize(PNM* img)
     return result;
 }
 
-PNM* Hough::detectEdges(PNM* img)
+PNM* HoughLines::detectEdges(PNM* img)
 {
     EdgeLaplacian* el;
     PNM* result;
@@ -39,7 +39,7 @@ PNM* Hough::detectEdges(PNM* img)
     return result;
 }
 
-PNM* Hough::houghTransform(PNM* img)
+PNM* HoughLines::houghTransform(PNM* img)
 {
     Hough* h;
     PNM* result;
@@ -64,21 +64,23 @@ PNM* HoughLines::transform()
 
     int width = image->width();
     int height = image->height();
-    PNM* img;
+    PNM* imge, *imgb, *imgh;
 
-    img = this->detectEdges(this->image);
-    img = this->binarize(img);
-    img = this->houghTransform(img);
+    imge = this->detectEdges(this->image);
+    imgb = this->binarize(imge);
+    imgh = this->houghTransform(imgb);
 
-    int theta = img->width();
-    int p = img->height();
+    int theta = imgh->width();
+    int p = imgh->height();
 
     QPainter* qPainter = new QPainter(newImage);
     qPainter->setPen(Qt::red);
 
     for (int x = 0; x < theta; x++)
-        for (int y = 0; y < p; y++) {
-            QRgb pixel = houghImage->pixel(x,y);
+    {
+        for (int y = 0; y < p; y++)
+        {
+            QRgb pixel = imgh->pixel(x,y);
             int v = qGray(pixel);
             if (v > threshold) {
                 int r = y - p/2;
@@ -93,11 +95,12 @@ PNM* HoughLines::transform()
                 qPainter->drawLine(x1, y1, x2, y2);
             }
         }
+    }
 
     if (!drawWholeLines) {
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++) {
-                if (qGray(binaryImage->pixel(x,y)) == 0)
+                if (qGray(imgb->pixel(x,y)) == 0)
                     newImage->setPixel(x,y,image->pixel(x,y));
             }
     }
