@@ -56,6 +56,20 @@ CornerHarris::CornerHarris(PNM* img, ImageViewer* iv) :
      this->Gy = es->rawVerticalDetection();
  }
 
+ void CornerHarris::complete_i_matrices(int width, int height)
+ {
+     int i, j;
+     for (i = 0; i < width; i++)
+     {
+         for (j = 0; j < height; j++)
+         {
+             this->I_xx(i, j) = (*this->Gx)(i, j)*(*this->Gx)(i, j);
+             this->I_yy(i, j) = (*this->Gy)(i, j)*(*this->Gy)(i, j);
+             this->I_xy(i, j) = (*this->Gx)(i, j)*(*this->Gy)(i, j);
+         }
+     }
+ }
+
 PNM* CornerHarris::transform()
 {
     int    threshold    = getParameter("threshold").toInt();
@@ -72,5 +86,7 @@ PNM* CornerHarris::transform()
     this->fill_matrices(width, height);
     img = this->toGrayScale(this->image);
     this->getGradients(img);
+    this->complete_i_matrices(width, height);
+
     return newImage;
 }

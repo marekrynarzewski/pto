@@ -16,6 +16,7 @@ private:
     PNM* toGrayScale(PNM* img);
     PNM* toBlurGaussian(PNM* img);
     void getGradients(PNM* img);
+    void complete_i_matrices(int width, int height);
 };
 
 #endif // CORNER_HARRIS_H
