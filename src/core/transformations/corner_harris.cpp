@@ -72,6 +72,7 @@ CornerHarris::CornerHarris(PNM* img, ImageViewer* iv) :
      }
  }
 
+<<<<<<< HEAD
  void CornerHarris::calculate_gauss(int i, int j)
  {
      int k, l;
@@ -122,6 +123,8 @@ CornerHarris::CornerHarris(PNM* img, ImageViewer* iv) :
  }
 
 
+=======
+>>>>>>> 7ab0f80f63e7fd048822150824e4e79ed8782d37
 PNM* CornerHarris::transform()
 {
     this->threshold    = getParameter("threshold").toInt();
@@ -142,6 +145,7 @@ PNM* CornerHarris::transform()
     img = this->toGrayScale(this->image);
     this->getGradients(img);
     this->complete_i_matrices(width, height);
+<<<<<<< HEAD
     for (i = 1; i < width - 1; i++)
     {
            for (j = 1; j < height - 1; j++)
@@ -149,6 +153,8 @@ PNM* CornerHarris::transform()
                this->calculate_for_pixel(i, j);
            }
     }
+=======
+>>>>>>> 7ab0f80f63e7fd048822150824e4e79ed8782d37
 
     return newImage;
 }
