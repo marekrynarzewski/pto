@@ -11,19 +11,18 @@ public:
 
     PNM* transform();
 private:
-    math::matrix<float> I_xx, I_xy, I_yy, candids, nonmax_sup, *Gx, *Gy, H;
+    math::matrix<float> I_xx, I_xy, I_yy, candids, nonmax_sup;
     int    threshold;
     double sigma, sigma_weight, k_param;
+
     void fill_matrices(int w, int h);
     PNM* toGrayScale(PNM* img);
     PNM* toBlurGaussian(PNM* img);
-    void getGradients(PNM* img);
-    void complete_i_matrices(int width, int height);
-    float Sxx = 0, Syy = 0, Sxy = 0;
+    void complete_i_matrices(PNM* img, int width, int height);
+
     void calculate_for_pixel(int i, int j);
-    void calculate_gauss(int i, int j);
-    float fill_H_matrix();
-    void divide_s_by_sigma_weight();
+    void calculate_gauss(int i, int j, float& Sxx, float& Sxy, float& Syy);
+    float fill_H_matrix(float Sxx, float Sxy, float Syy);
 };
 
 #endif // CORNER_HARRIS_H
